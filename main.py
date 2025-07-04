@@ -37,17 +37,17 @@ slow_id = 0
 var1 = IntVar()
 var2 = IntVar()
 has_collided = False
+time_count = 0
 
 
 def start():
-    global started, ball1, ball2
-
+    global started
     started = True
     create_balls()
 
 
 def begin():
-    global has_collided
+    global has_collided, time_count
     mass1_slider.set(5)
     mass2_slider.set(5)
     x_velo1_slider.set(0)
@@ -61,10 +61,11 @@ def begin():
     var1.set(1)
     var2.set(0)
     has_collided = False
+    time_count = 0
 
 
 def restarted():
-    global started, ball1, ball2,slow_clicked, slowmo
+    global started, slow_clicked, slowmo
 
     started = False
     slow_clicked = False
@@ -92,6 +93,15 @@ def elastic_check():
 def inelastic_check():
     if var2.get() == 1:
         var1.set(0)
+
+
+def timer():
+    global started, time_count
+    canvas.create_text(500, 20, text=f"Time: {round(time_count,3)}", font=("Arial", 14, "bold"), fill="grey")
+    if started:
+        time_count += 0.03
+
+
 start_button = Button(root, text="Start", width=10, command=start)
 start_button.pack(pady=20)
 
@@ -152,8 +162,8 @@ class Balls:
     def draw(self):
         global started
         if started:
-            self.x += self.x_velo
-            self.y -= self.y_velo
+            self.x += self.x_velo*0.45
+            self.y -= self.y_velo*0.45
         else:
             if self.is_ball1:
                 self.mass = mass1_slider.get()
@@ -186,12 +196,12 @@ class Balls:
         if self.x_velo != 0 or self.y_velo != 0:
             velo = round(math.sqrt(self.x_velo**2 + self.y_velo**2),3)
             if self.y_velo < 0:
-                bufferx = 25
-                buffery = -25
+                buffer_x = 25
+                buffer_y = -25
             else:
-                bufferx = 0
-                buffery = 0
-            canvas.create_text(self.x+(self.x_velo*15)+bufferx, self.y-(self.y_velo*15)-15+buffery, text = f"|v| = {velo} m/s")
+                buffer_x = 0
+                buffer_y = 0
+            canvas.create_text(self.x+(self.x_velo*15)+buffer_x, self.y-(self.y_velo*15)-15+buffer_y, text = f"|v| = {velo} m/s")
 
 
 
@@ -207,6 +217,8 @@ def check_collision(ball1, ball2):
 def update():
     global slow_id, has_collided
     canvas.delete("all")
+    canvas.create_line(475 , 430, 490, 430, fill="grey", width=3)
+    canvas.create_text(510 , 428, text="= 1m ", fill="grey")
     if slow_clicked:
         slow_id = canvas.create_text(90, 20, text="Slowed", font=("Arial", 14, "bold"), fill="grey")
     ball1.draw()
@@ -235,6 +247,8 @@ def update():
         has_collided = True
     if not check_collision(ball1, ball2):
         has_collided = False
+
+    timer()
 
     root.after(30+slowmo, update)
 
