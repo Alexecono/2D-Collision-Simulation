@@ -38,6 +38,8 @@ var1 = IntVar()
 var2 = IntVar()
 has_collided = False
 time_count = 0
+init_kinetic_energy = 0.0
+change_kinetic_energy = 0.0
 
 
 def start():
@@ -65,11 +67,13 @@ def begin():
 
 
 def restarted():
-    global started, slow_clicked, slowmo
+    global started, slow_clicked, slowmo, init_kinetic_energy, change_kinetic_energy
 
     started = False
     slow_clicked = False
     slowmo = 0
+    init_kinetic_energy = 0.0
+    change_kinetic_energy = 0.0
     create_balls()
     begin()
 
@@ -101,6 +105,23 @@ def timer():
     if started:
         time_count += 0.03
 
+
+def kinetic_energy():
+    global has_collided, started, init_kinetic_energy, change_kinetic_energy
+    if not started:
+        velo1 = math.sqrt(ball1.x_velo ** 2 + ball1.y_velo ** 2)
+        velo2 = math.sqrt(ball2.x_velo ** 2 + ball2.y_velo ** 2)
+        init_kinetic_energy = ((ball1.mass*(velo1**2)) + (ball2.mass*(velo2**2)))/2
+    canvas.create_text(120, 410, text=f"Initial Ek: {round(init_kinetic_energy,3)}J", font=("Arial", 14, "bold"), fill="grey")
+    if has_collided:
+        if var1.get() == 1:
+            velof1 = math.sqrt(ball1.x_velo ** 2 + ball1.y_velo ** 2)
+            velof2 = math.sqrt(ball2.x_velo ** 2 + ball2.y_velo ** 2)
+            change_kinetic_energy = (((ball1.mass*(velof1**2)) + (ball2.mass*(velof2**2)))/2) - init_kinetic_energy
+        else:
+            velof_inelastic = math.sqrt(ball1.x_velo ** 2 + ball1.x_velo ** 2)
+            change_kinetic_energy = (((ball1.mass + ball2.mass)*velof_inelastic)/2) - init_kinetic_energy
+    canvas.create_text(120, 430, text=f"Change in Ek: {round(change_kinetic_energy,3)}J", font=("Arial", 14, "bold"), fill="grey")
 
 start_button = Button(root, text="Start", width=10, command=start)
 start_button.pack(pady=20)
@@ -249,6 +270,7 @@ def update():
         has_collided = False
 
     timer()
+    kinetic_energy()
 
     root.after(30+slowmo, update)
 
