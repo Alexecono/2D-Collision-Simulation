@@ -49,7 +49,7 @@ def start():
 
 
 def begin():
-    global has_collided, time_count
+    global has_collided, time_count, started, slow_clicked, slowmo, init_kinetic_energy, change_kinetic_energy
     mass1_slider.set(5)
     mass2_slider.set(5)
     x_velo1_slider.set(0)
@@ -64,16 +64,14 @@ def begin():
     var2.set(0)
     has_collided = False
     time_count = 0
-
-
-def restarted():
-    global started, slow_clicked, slowmo, init_kinetic_energy, change_kinetic_energy
-
     started = False
     slow_clicked = False
     slowmo = 0
     init_kinetic_energy = 0.0
     change_kinetic_energy = 0.0
+
+
+def restarted():
     create_balls()
     begin()
 
