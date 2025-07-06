@@ -119,8 +119,8 @@ def kinetic_energy():
             velof2 = math.sqrt(ball2.x_velo ** 2 + ball2.y_velo ** 2)
             change_kinetic_energy = (((ball1.mass*(velof1**2)) + (ball2.mass*(velof2**2)))/2) - init_kinetic_energy
         else:
-            velof_inelastic = math.sqrt(ball1.x_velo ** 2 + ball1.x_velo ** 2)
-            change_kinetic_energy = (((ball1.mass + ball2.mass)*velof_inelastic)/2) - init_kinetic_energy
+            velof_inelastic = math.sqrt(ball1.x_velo ** 2 + ball1.y_velo ** 2)
+            change_kinetic_energy = (((ball1.mass + ball2.mass)*velof_inelastic**2)/2) - init_kinetic_energy
     canvas.create_text(120, 430, text=f"Change in Ek: {round(change_kinetic_energy,3)}J", font=("Arial", 14, "bold"), fill="grey")
 
 start_button = Button(root, text="Start", width=10, command=start)
